@@ -49,6 +49,20 @@ jii_ret <- get_stock_price(stocks_code, dateStart, dateFinish, freqValue)
 View(jii_ret)
 write.csv(jii_ret, "data/jii_jul-aug_2022_ret.csv", row.names = FALSE)
 
+# plot stocks return
+library(MASS)
+library(reshape2)
+library(reshape)
+library(ggplot2)
+jii_ret <- read.csv("data/jii_jul-aug_2022_ret.csv")
+molten_jii_ret <- melt(jii_ret, id="Date")
+molten_jii_ret$Date <- as.Date(molten_jii_ret$Date)
+ggplot(molten_jii_ret[molten_jii_ret$Date > as.Date("2022-01-01"),]) +
+  geom_line(aes(x=Date, y=value, colour=variable)) +
+  scale_colour_discrete(name="Kode Saham") +
+  ylab("Return") +
+  xlab("Tanggal")
+
 # get expected return and risk
 jii_ret <- read.csv("data/jii_jul-aug_2022_ret.csv")
 jii_ret <- jii_ret[,-1]  # drop date column
@@ -65,6 +79,23 @@ jii_ret_risk <- read.csv("data/jii_jul-aug_2022_ret_risk.csv")
 fviz_nbclust(jii_ret_risk, FUNcluster = kmeans, method="wss")
 fviz_nbclust(jii_ret_risk, FUNcluster = kmeans, method="silhouette")
 
-clust <- kmeans(jii_ret_risk, centers = 3)
+clust <- kmeans(jii_ret_risk, centers = 2)
 clust
 fviz_cluster(clust, jii_ret_risk)
+
+# mean and covariance
+jii_ret <- read.csv("data/jii_jul-aug_2022_ret.csv")
+stocks_choosed <- list(
+  clust_1 = c("ITMG.JK", "ADRO.JK", "PTBA.JK", "MDKA.JK"),
+  clust_2 = c("INDF.JK", "TLKM.JK", "KLBF.JK", "UNTR.JK")
+) 
+mean_stocks_choosed = list(
+  clust_1 = colMeans(jii_ret[,stocks_choosed$clust_1]),
+  clust_2 = colMeans(jii_ret[,stocks_choosed$clust_2])
+)
+cov_stocks_choosed = list(
+  clust_1 = cov(jii_ret[,stocks_choosed$clust_1]),
+  clust_2 = cov(jii_ret[,stocks_choosed$clust_2])
+)
+mean_stocks_choosed
+cov_stocks_choosed
