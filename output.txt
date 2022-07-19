@@ -1,9 +1,16 @@
-> ## MLE mean & covariance
-> mean_stocks_choosed = list(
+> # mean and covariance
+> jii_ret <- read.csv("data/jii_jul-aug_2022_ret.csv")
+> stocks_choosed <- list(
++   clust_1 = c("ITMG.JK", "ADRO.JK", "PTBA.JK", "MDKA.JK"),
++   clust_2 = c("INDF.JK", "TLKM.JK", "KLBF.JK", "UNTR.JK")
++ ) 
+> 
+> ## MLE
+> mean_stocks_choosed <- list(
 +   clust_1 = colMeans(jii_ret[,stocks_choosed$clust_1]),
 +   clust_2 = colMeans(jii_ret[,stocks_choosed$clust_2])
 + )
-> cov_stocks_choosed = list(
+> cov_stocks_choosed <- list(
 +   clust_1 = cov(jii_ret[,stocks_choosed$clust_1]),
 +   clust_2 = cov(jii_ret[,stocks_choosed$clust_2])
 + )
@@ -30,3 +37,43 @@ INDF.JK  0.0013411007 -0.0006651464 0.0007413603 0.0005877551
 TLKM.JK -0.0006651464  0.0033644565 0.0007914582 0.0023555075
 KLBF.JK  0.0007413603  0.0007914582 0.0027352648 0.0013438006
 UNTR.JK  0.0005877551  0.0023555075 0.0013438006 0.0101874036
+
+> 
+> ## S-estimation
+> library(rrcov)
+> cov_s_stocks_choosed <- list(
++   clust_1 = CovSest(jii_ret[,stocks_choosed$clust_1]),
++   clust_2 = CovSest(jii_ret[,stocks_choosed$clust_2])
++ )
+> cov_s_stocks_choosed
+$clust_1
+
+Call:
+CovSest(x = jii_ret[, stocks_choosed$clust_1])
+-> Method:  S-estimates: S-FAST 
+
+Robust Estimate of Location: 
+[1]  0.057950  0.010197  0.001555  0.029737
+
+Robust Estimate of Covariance: 
+         ITMG.JK    ADRO.JK    PTBA.JK    MDKA.JK  
+ITMG.JK  0.0144093  0.0065002  0.0086549  0.0058955
+ADRO.JK  0.0065002  0.0060040  0.0047754  0.0051300
+PTBA.JK  0.0086549  0.0047754  0.0106357  0.0008628
+MDKA.JK  0.0058955  0.0051300  0.0008628  0.0329065
+
+$clust_2
+
+Call:
+CovSest(x = jii_ret[, stocks_choosed$clust_2])
+-> Method:  S-estimates: S-FAST 
+
+Robust Estimate of Location: 
+[1]  0.004383  0.019229  0.004267  0.014946
+
+Robust Estimate of Covariance: 
+         INDF.JK     TLKM.JK     KLBF.JK     UNTR.JK   
+INDF.JK   0.0023917  -0.0021078   0.0012131  -0.0014575
+TLKM.JK  -0.0021078   0.0052974   0.0005025   0.0018680
+KLBF.JK   0.0012131   0.0005025   0.0034155   0.0014192
+UNTR.JK  -0.0014575   0.0018680   0.0014192   0.0045692

@@ -89,13 +89,23 @@ stocks_choosed <- list(
   clust_1 = c("ITMG.JK", "ADRO.JK", "PTBA.JK", "MDKA.JK"),
   clust_2 = c("INDF.JK", "TLKM.JK", "KLBF.JK", "UNTR.JK")
 ) 
-mean_stocks_choosed = list(
+
+## MLE
+mean_stocks_choosed <- list(
   clust_1 = colMeans(jii_ret[,stocks_choosed$clust_1]),
   clust_2 = colMeans(jii_ret[,stocks_choosed$clust_2])
 )
-cov_stocks_choosed = list(
+cov_stocks_choosed <- list(
   clust_1 = cov(jii_ret[,stocks_choosed$clust_1]),
   clust_2 = cov(jii_ret[,stocks_choosed$clust_2])
 )
 mean_stocks_choosed
 cov_stocks_choosed
+
+## S-estimation
+library(rrcov)
+cov_s_stocks_choosed <- list(
+  clust_1 = CovSest(jii_ret[,stocks_choosed$clust_1]),
+  clust_2 = CovSest(jii_ret[,stocks_choosed$clust_2])
+)
+cov_s_stocks_choosed
